@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/adminAssets/css/main.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <style>
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .image-preview {
+            position: relative;
+            margin: 10px;
+        }
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            display: block;
+        }
+        .image-preview .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+   
+    
+<section class="content-main">
+    <div class="row">
+        <div class="col-6">
+            <div class="content-header">
+                <h2 class="content-title">Edit Product</h2>
+            </div>
+        </div>
+    </div>
+  
+    <form id="editProductForm" action="/admin/editProduct/<%= product._id %>" method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>1. General info</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Product title</label>
+                                    <input type="text" placeholder="Type here" class="form-control" name="name" value="<%= product.name %>" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea placeholder="Type here" class="form-control" rows="4" name="description" required><%= product.description %></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Author</label>
+                                    <textarea placeholder="Type here" class="form-control" rows="4" name="author" required><%= product.author %></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>2. Pricing</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Cost in USD</label>
+                                    <input type="text" placeholder="$00.0" class="form-control" name="price" value="<%= product.price %>" required>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>3. Category</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                        <input class="form-check-input" name="category" type="radio" value="Novel" <%= product.category === 'Novel' ? 'checked' : '' %>>
+                                        <span class="form-check-label">Novel</span>
+                                    </label>
+                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                        <input class="form-check-input" name="category" type="radio" value="Biography" <%= product.category === 'Biography' ? 'checked' : '' %>>
+                                        <span class="form-check-label">Biography</span>
+                                    </label>
+                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                        <input class="form-check-input" name="category" type="radio" value="Fiction" <%= product.category === 'Fiction' ? 'checked' : '' %>>
+                                        <span class="form-check-label">Fiction</span>
+                                    </label>
+                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                        <input class="form-check-input" name="category" type="radio" value="Travel" <%= product.category === 'Travel' ? 'checked' : '' %>>
+                                        <span class="form-check-label">Travel</span>
+                                    </label>
+                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                        <input class="form-check-input" name="category" type="radio" value="Others" <%= product.category === 'Others' ? 'checked' : '' %>>
+                                        <span class="form-check-label">Others</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>4. Media</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Images</label>
+                                    <input class="form-control" type="file" name="images" id="imageInput" multiple>
+                                </div>
+                                <div class="mb-4">
+                                    <div class="image-preview-container" id="imagePreviewContainer">
+                                        <% if (product.images && product.images.length > 0) { %>
+                                            <% product.images.forEach((image, index) => { %>
+                                                <div class="image-preview">
+                                                    <img src="/userAssets/imgs/shop/<%= image %>" alt="Product Image" width="100">
+                                                    <button class="remove-btn" type="button" onclick="removeImage(event,)">X</button>
+                                                </div>
+                                            <% }) %>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div id="croppedImagesContainer"></div>
+        
+                                <div>
+                                    <button class="btn btn-md rounded font-sm hover-up" type="submit">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.getElementById('imageInput');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const croppedImagesContainer = document.getElementById('croppedImagesContainer');
+        let cropperInstances = [];
+
+        imageInput.addEventListener('change', function () {
+            const files = Array.from(this.files);
+
+            if (files.length > 3) {
+                alert('You can upload a maximum of 3 images per product.');
+                imageInput.value = '';
+                return;
+            }
+
+            imagePreviewContainer.innerHTML = '';
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.classList.add('image-preview');
+
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    previewDiv.appendChild(img);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('remove-btn');
+                    removeBtn.innerText = 'X';
+                    removeBtn.addEventListener('click', () => {
+                        previewDiv.remove();
+                        cropperInstances[index].destroy();
+                        cropperInstances.splice(index, 1); // Remove cropper instance from array
+                        if (cropperInstances.length === 0) {
+                            imageInput.value = '';
+                        }
+                    });
+                    previewDiv.appendChild(removeBtn);
+
+                    imagePreviewContainer.appendChild(previewDiv);
+
+                    const cropper = new Cropper(img, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        zoomable: false,
+                        ready: function () {
+                            console.log('Cropper.js is ready for image ' + index);
+                        }
+                    });
+
+                    cropperInstances.push(cropper);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        document.getElementById('editProductForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            cropperInstances.forEach((cropper, index) => {
+                const croppedImage = cropper.getCroppedCanvas().toDataURL('image/jpeg');
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `croppedImages[${index}]`;
+                input.value = croppedImage;
+                croppedImagesContainer.appendChild(input);
+            });
+
+            this.submit();
+        });
+    });
+
+    function removeImage(event, index) {
+        event.preventDefault();
+        event.target.parentElement.remove();
+        cropperInstances[index].destroy();
+        cropperInstances.splice(index, 1); // Remove cropper instance from array
+        if (cropperInstances.length === 0) {
+            imageInput.value = '';
+        }
+    }
+</script>
+</body>
+</html>
+
+<!-- adminFooter.ejs -->

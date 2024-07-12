@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>BoosKart</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/userAssets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/userAssets/css/main.css?v=3.4">
+</head>
+
+<body>
+    <main class="main">
+        <section class="pt-150 pb-150">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-6">
+                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
+                                    <div class="padding_eight_all bg-white">
+                                        <div class="heading_s1">
+                                            <h3 class="mb-30 ml-110">OTP Verification</h3>
+                                        </div>
+                                        <form method="post" action="/verifyotp">
+                                            <div class="form-group">
+                                                <input type="text" name="otp" placeholder="Enter OTP">
+                                            </div>
+                                            <div class="login_footer form-group">
+                                                <label class="form-check-label" for="exampleCheckbox1"><span>Timer :
+                                                        <span id="otpTimer"></span></span></label>
+                                                <a id="resendOTP" class="text-muted" href="#"
+                                                    style="display: none;">Resend OTP</a>
+
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-fill-out btn-block hover-up ml-160"
+                                                    >Verify</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let otpTimer;
+        let timeLeft = 60;
+
+        function startTimer() {
+            otpTimer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(otpTimer);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'OTP Expired',
+                        text: 'Please request a new OTP.'
+                    });
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('otpTimer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (timeLeft === 0) {
+                document.getElementById('resendOTP').style.display = 'inline';
+            } else {
+                document.getElementById('resendOTP').style.display = 'none';
+            }
+        }
+
+        window.onload = function () {
+            startTimer();
+        };
+
+
+
+        document.getElementById('resendOTP').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the default action of the link
+
+            fetch('/resendOTP', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OTP Resent Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        return response.json();
+                    }
+                    throw new Error('Failed to resend OTP');
+                })
+                .then(data => {
+                    // Display the message from the server
+                    // If newOTP is available in the response, you can use it to update the UI or take further actions
+                    if (data.newOTP) {
+                        timeLeft = 60;
+                        startTimer(); // Restart the timer
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resending OTP:', error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to resend OTP'
+                    });
+                });
+        });
+
+    </script>
+    <!-- Vendor JS-->
+    <script src="userAssets/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="userAssets/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="userAssets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="userAssets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="userAssets/js/plugins/slick.js"></script>
+    <script src="userAssets/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="userAssets/js/plugins/wow.js"></script>
+    <script src="userAssets/js/plugins/jquery-ui.js"></script>
+    <script src="userAssets/js/plugins/perfect-scrollbar.js"></script>
+    <script src="userAssets/js/plugins/magnific-popup.js"></script>
+    <script src="userAssets/js/plugins/select2.min.js"></script>
+    <script src="userAssets/js/plugins/waypoints.js"></script>
+    <script src="userAssets/js/plugins/counterup.js"></script>
+    <script src="userAssets/js/plugins/jquery.countdown.min.js"></script>
+    <script src="userAssets/js/plugins/images-loaded.js"></script>
+    <script src="userAssets/js/plugins/isotope.js"></script>
+    <script src="userAssets/js/plugins/scrollup.js"></script>
+    <script src="userAssets/js/plugins/jquery.vticker-min.js"></script>
+    <script src="userAssets/js/plugins/jquery.theia.sticky.js"></script>
+    <!-- Template  JS -->
+    <script src="./userAssets/js/main.js?v=3.4"></script>
+</body>
+
+</html>
