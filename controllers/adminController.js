@@ -8,7 +8,6 @@ const path = require('path');
 
 // const User = require("../model/userModel");
 const bcrypt = require("bcryptjs");
-console.log("hello");
 
 // Admin controller object
 const adminController = {
@@ -95,7 +94,7 @@ const adminController = {
         const outputPath = path.join(__dirname, '../public/userAssets/imgs/shop', filename);
 
         await sharp(file.path)
-          .resize(500, 500)
+          // .resize(500, 500)
           .toFile(outputPath);
 
         images.push(filename);

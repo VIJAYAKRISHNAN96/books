@@ -89,6 +89,13 @@
             }
         }
 
+        function resetTimer() {
+            clearInterval(otpTimer);
+            timeLeft = 60;
+            updateTimerDisplay();
+            startTimer();
+        }
+
         window.onload = function () {
             startTimer();
         };
@@ -104,28 +111,26 @@
                     'Content-Type': 'application/json'
                 },
             })
-                .then(response => {
-                    if (response.ok) {
+            .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
                         Swal.fire({
                             icon: 'success',
                             title: 'OTP Resent Successfully',
                             showConfirmButton: false,
                             timer: 1500
                         });
-                        return response.json();
-                    }
-                    throw new Error('Failed to resend OTP');
-                })
-                .then(data => {
-                    // Display the message from the server
-                    // If newOTP is available in the response, you can use it to update the UI or take further actions
-                    if (data.newOTP) {
-                        timeLeft = 60;
-                        startTimer(); // Restart the timer
+                        resetTimer();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to resend OTP'
+                        });
                     }
                 })
                 .catch(error => {
-                    console.error('Error resending OTP:', error.message);
+                    console.error('Error resending OTP:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -133,6 +138,36 @@
                     });
                 });
         });
+
+        //         .then(response => {
+        //             if (response.ok) {
+        //                 Swal.fire({
+        //                     icon: 'success',
+        //                     title: 'OTP Resent Successfully',
+        //                     showConfirmButton: false,
+        //                     timer: 1500
+        //                 });
+        //                 return response.json();
+        //             }
+        //             throw new Error('Failed to resend OTP');
+        //         })
+        //         .then(data => {
+        //             // Display the message from the server
+        //             // If newOTP is available in the response, you can use it to update the UI or take further actions
+        //             if (data.newOTP) {
+        //                 timeLeft = 60;
+        //                 startTimer(); // Restart the timer
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error resending OTP:', error.message);
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Error',
+        //                 text: 'Failed to resend OTP'
+        //             });
+        //         });
+        // });
 
     </script>
     <!-- Vendor JS-->
