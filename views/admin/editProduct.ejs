@@ -68,7 +68,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
-                                <h6>1. General info</h6>
+                                <h6>1. Product info</h6>
                             </div>
                             <div class="col-md-9">
                                 <div class="mb-4">
@@ -92,8 +92,13 @@
                             </div>
                             <div class="col-md-9">
                                 <div class="mb-4">
-                                    <label class="form-label">Cost in USD</label>
+                                    <label class="form-label">Regular Price in USD</label>
                                     <input type="text" placeholder="$00.0" class="form-control" name="price" value="<%= product.price %>" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Discount in percentage</label>
+                                    <input type="text" placeholder="00%" class="form-control" name="price" value="<%= (Math.floor(((product.price-product.discountPrice)/product.price)*100)) %>%" 
+                                    required>
                                 </div>
                             </div>
                         </div>
@@ -104,26 +109,25 @@
                             </div>
                             <div class="col-md-9">
                                 <div class="mb-4">
-                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                        <input class="form-check-input" name="category" type="radio" value="Novel" <%= product.category === 'Novel' ? 'checked' : '' %>>
-                                        <span class="form-check-label">Novel</span>
-                                    </label>
-                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                        <input class="form-check-input" name="category" type="radio" value="Biography" <%= product.category === 'Biography' ? 'checked' : '' %>>
-                                        <span class="form-check-label">Biography</span>
-                                    </label>
-                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                        <input class="form-check-input" name="category" type="radio" value="Fiction" <%= product.category === 'Fiction' ? 'checked' : '' %>>
-                                        <span class="form-check-label">Fiction</span>
-                                    </label>
-                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                        <input class="form-check-input" name="category" type="radio" value="Travel" <%= product.category === 'Travel' ? 'checked' : '' %>>
-                                        <span class="form-check-label">Travel</span>
-                                    </label>
-                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                        <input class="form-check-input" name="category" type="radio" value="Others" <%= product.category === 'Others' ? 'checked' : '' %>>
-                                        <span class="form-check-label">Others</span>
-                                    </label>
+                                    <label class="form-label">Select Category</label>
+                                    <select class="form-select" name="category" required>
+                                        <option value="" disabled selected>Select a category</option>
+                                        <% categories.forEach(category => { %>
+                                            <option value="<%= category.name %>"><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>4. Stock</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label for="stock" class="form-label">Stock</label>
+                                     <input type="number" class="form-control" id="stock" name="stock" value="<%= product.stock %>" required>
                                 </div>
                             </div>
                         </div>

@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
     name: { 
         type: String, 
-        required: true },
+        required: true 
+    },
     description:{ 
         type: String, 
         required: true
@@ -15,9 +16,7 @@ const productSchema = new mongoose.Schema({
         type: Number, 
         required: true 
     },
-    // brand: { 
-    //     type: String, 
-    //     required: true },
+  
     category: { 
         type: String, 
         required: true },
@@ -25,6 +24,20 @@ const productSchema = new mongoose.Schema({
         type: [String],
         validate: [arrayLimit, '{PATH} exceeds the limit of 3'],
     },
+    stock:{
+        type: Number,
+        required:true
+    },
+    isListed:{
+        type: String,
+        enum:["Active","Inactive"],
+        default:"Active"
+    },
+    discountPrice:{
+        type: Number,
+        default:0,
+        min:0
+    }
 });
 
 function arrayLimit(val) {

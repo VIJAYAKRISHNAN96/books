@@ -73,9 +73,11 @@ const adminController = {
       res.status(500).send('Internal Server Error');
     }
   },
-  loadaddProductpage : (req, res) => {
+  loadaddProductpage : async (req, res) => {
     try {
-      res.render("addProduct");
+      const product = await productModel.findById(req.params.id);
+      const categories = await categoryModel.find();
+      res.render("addProduct", { product,categories });
     } catch (error) {
       console.log(error.message);
       res.status(500).send('Internal Server Error');
@@ -86,7 +88,9 @@ const adminController = {
     
   loadaddProduct: async (req, res) => {
     try {
-      const { name, description, author, price, category } = req.body;
+      const { name, description, author, price, category,stock} = req.body;
+      const parsedPrice = parseFloat(price);
+      const parsedStock = parseInt(stock);
       const images = [];
 
       for (const file of req.files) {
@@ -103,12 +107,12 @@ const adminController = {
         // fs.unlinkSync(file.path);
       }
 
-      const productExists = await productModel.findOne({ name, description, author, price, category });
+      const productExists = await productModel.findOne({ name, description, author, price:parsedPrice, category ,stock : parsedStock});
       if (productExists) {
         return res.render("addProduct", { message: "Product already exists" });
       }
 
-      const newProduct = new productModel({ name, description, author, price, category, images });
+      const newProduct = new productModel({ name, description, author, price:parsedPrice, category,stock:parsedStock, images });
       await newProduct.save();
       return res.status(200).redirect("/admin/products");
     } catch (error) {
@@ -119,7 +123,9 @@ const adminController = {
   loadeditProductpage : async (req, res) => {
     try {
       const product = await productModel.findById(req.params.id);
-      res.render("editProduct", { product });
+      const categories = await categoryModel.find();
+
+      res.render("editProduct", { product,categories });
 
       // res.render("editProduct");
     } catch (error) {
@@ -130,7 +136,8 @@ const adminController = {
   },
   editProduct: async (req, res) => {
     try {
-      const { name, description, author, price, category } = req.body;
+      const { name, description, author, price, category,stock } = req.body;
+      
       const product = await productModel.findById(req.params.id);
 
       if (req.files.length > 0) {
@@ -155,9 +162,10 @@ const adminController = {
 
       product.name = name;
       product.description = description;
-      product.price = price;
+      product.price = parseFloat(price);
       product.author = author;
       product.category = category;
+      product.stock = parseFloat(stock);
 
       await product.save();
       return res.status(201).redirect('/admin/products');
@@ -204,30 +212,30 @@ const adminController = {
 
   },
   
-  addCategory : async (req, res) => {
+    addCategory : async (req, res) => {
+      const { name, description } = req.body;
+      console.log("dssdsdsdfsdfsdfsdf", req.body);
+      try {
+          const newCategory = new categoryModel ({ name, description });
+          await newCategory.save();
+          return res.status(200).redirect("/admin/category")
+      } catch (error) {
+          console.error(error.message);
+          res.status(500).send('Internal Server Error rrrr');
+      }
+  },
+  editCategory : async (req, res) => {
+    const _id = req.params.id;
     const { name, description } = req.body;
     console.log("dssdsdsdfsdfsdfsdf", req.body);
     try {
-        const newCategory = new categoryModel ({ name, description });
-        await newCategory.save();
-        return res.status(200).redirect("/admin/category")
+        await categoryModel.findByIdAndUpdate(_id, { name, description });
+        return res.status(201).redirect('/admin/category');
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Internal Server Error rrrr');
+        res.status(500).send('Internal Server Error');
     }
-},
-editCategory : async (req, res) => {
-  const _id = req.params.id;
-  const { name, description } = req.body;
-  console.log("dssdsdsdfsdfsdfsdf", req.body);
-  try {
-      await categoryModel.findByIdAndUpdate(_id, { name, description });
-      return res.status(201).redirect('/admin/category');
-  } catch (error) {
-      console.error(error.message);
-      res.status(500).send('Internal Server Error');
-  }
-},
+  },
 
 deleteCategory : async (req, res) => {
   const { id } = req.params;

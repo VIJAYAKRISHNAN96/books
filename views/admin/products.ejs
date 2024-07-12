@@ -251,12 +251,16 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$<%= product.price %></span> </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$<%= product.price %></span> 
+                            </div>
                             <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                <span class="badge rounded-pill alert-success">Active</span>
+                                <span 
+                                class="badge rounded-pill <%= product.isListed === 'Active' ? 'alert-success' : 'alert-danger' %>"
+                                ><%= product.isListed %>
+                            </span>
                             </div>
                             <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span>02.11.2022</span>
+                                <span>stock:<%=product.stock %></span>
                             </div>
                             <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
                                 <a href="/admin/editProduct/<%= product._id %>" class="btn btn-sm font-sm rounded btn-brand">
