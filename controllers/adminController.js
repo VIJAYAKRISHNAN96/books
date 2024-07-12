@@ -8,7 +8,7 @@ const path = require('path');
 
 // const User = require("../model/userModel");
 const bcrypt = require("bcryptjs");
-
+console.log("hello");
 
 // Admin controller object
 const adminController = {
@@ -47,6 +47,7 @@ const adminController = {
       return res.status(500).json({ message: "Internal server error" });
     }
   },
+
 
   loadDashboard: (req, res) => {
     res.render("dashboard");
