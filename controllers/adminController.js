@@ -136,7 +136,7 @@ const adminController = {
   },
   editProduct: async (req, res) => {
     try {
-      const { name, description, author, price, category,stock } = req.body;
+      const { name, description, author, price, category,stock,discountPrice } = req.body;
       
       const product = await productModel.findById(req.params.id);
 
@@ -166,6 +166,7 @@ const adminController = {
       product.author = author;
       product.category = category;
       product.stock = parseFloat(stock);
+      product.discountPrice = discountPrice;
 
       await product.save();
       return res.status(201).redirect('/admin/products');

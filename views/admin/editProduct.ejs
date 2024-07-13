@@ -94,12 +94,29 @@
                                 <div class="mb-4">
                                     <label class="form-label">Regular Price in USD</label>
                                     <input type="text" placeholder="$00.0" class="form-control" name="price" value="<%= product.price %>" required>
+                                  </div>
+                                  <div class="mb-4">
+                                    <label class="form-label">Discount Price</label>
+                                    <input type="number" class="form-control" id="discount-price" name="discountPrice" value="<%= product.discountPrice %>" required>
+                                  </div>
+                                  <div class="mb-4">
+                                    <label class="form-label">Discount in percentage</label>
+                                    <input type="text" placeholder="00%" class="form-control" id="discount-percentage" name="discountPercentage" value="<%= (product.price && product.discountPrice) ? Math.floor(((product.price - product.discountPrice) / product.price) * 100) : 0 %>%" required>
+                                  </div>
+                                <!-- <div class="mb-4">
+                                    <label class="form-label">Regular Price in USD</label>
+                                    <input type="text" placeholder="$00.0" class="form-control" name="price" value="<%= product.price %>" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Discount Price</label>
+                                    <input type="number" class="form-control" id="discount-price" name="discountPrice" value="<%= product.discountPrice %>" required>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Discount in percentage</label>
-                                    <input type="text" placeholder="00%" class="form-control" name="price" value="<%= (Math.floor(((product.price-product.discountPrice)/product.price)*100)) %>%" 
-                                    required>
-                                </div>
+                                    <input type="text" placeholder="00%" class="form-control" id="discount-percentage" name="discountPercentage" value="<%= (product.price && product.discountPrice) ? Math.floor(((product.price - product.discountPrice) / product.price) * 100) : 0 %>%" required>
+                                    
+                                </div> -->
+
                             </div>
                         </div>
                         <hr class="mb-4 mt-0">

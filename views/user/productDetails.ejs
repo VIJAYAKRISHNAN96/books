@@ -185,10 +185,17 @@
                                         </div>
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
-                                                <ins><span class="text-brand">$<%= product.price %></span></ins>
-                                                <ins><span class="old-price font-md ml-15">$200.00</span></ins>
-                                                <span class="save-price font-md color3 ml-15">25% Off</span>
-                                            </div>
+                                                <ins><span class="text-brand">$<%= product.discountPrice.toFixed(2) %></span></ins>
+                                                <ins><span class="old-price font-md ml-15">$<%= product.price.toFixed(2) %></span></ins>
+                                                <% if (product.price > product.discountPrice) { %>
+                                                  <span class="save-price font-md color3 ml-15"><%= Math.floor(((product.price - product.discountPrice) / product.price) * 100) %>% Off</span>
+                                                <% } %>
+                                              </div>
+                                            <!-- <div class="product-price primary-color float-left">
+                                                <ins><span class="text-brand">$<%= product.discountPrice %></span></ins>
+                                                <ins><span class="old-price font-md ml-15">$<%= product.price %></span></ins>
+                                                <span class="save-price font-md color3 ml-15"><%= (Math.floor(((product.price-product.discountPrice)/product.price)*100)) %>% Off</span>
+                                            </div> -->
                                         </div>
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                         <div class="short-desc mb-30">
@@ -218,9 +225,9 @@
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
-                                            <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
+                                            <!-- <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li> -->
                                             <!-- <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li> -->
-                                            <li>Availability:<span class="in-stock text-success ml-5">8 Items In Stock</span></li>
+                                            <li>Availability:<span class="in-stock text-success ml-5"><%=product.stock %> Items In Stock</span></li>
                                         </ul>
                                     </div>
                                 </div>
