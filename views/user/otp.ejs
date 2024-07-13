@@ -139,37 +139,52 @@
                 });
         });
 
-        //         .then(response => {
-        //             if (response.ok) {
-        //                 Swal.fire({
-        //                     icon: 'success',
-        //                     title: 'OTP Resent Successfully',
-        //                     showConfirmButton: false,
-        //                     timer: 1500
-        //                 });
-        //                 return response.json();
-        //             }
-        //             throw new Error('Failed to resend OTP');
-        //         })
-        //         .then(data => {
-        //             // Display the message from the server
-        //             // If newOTP is available in the response, you can use it to update the UI or take further actions
-        //             if (data.newOTP) {
-        //                 timeLeft = 60;
-        //                 startTimer(); // Restart the timer
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error resending OTP:', error.message);
-        //             Swal.fire({
-        //                 icon: 'error',
-        //                 title: 'Error',
-        //                 text: 'Failed to resend OTP'
-        //             });
-        //         });
-        // });
-
+       
     </script>
+    <script>
+        document.querySelector('form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const otp = document.querySelector('input[name="otp"]').value;
+            
+            try {
+                const response = await fetch('/verifyOTP', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ otp })
+                });
+    
+                const result = await response.json();
+    
+                if (result.status === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: result.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = "/login";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An unexpected error occurred. Please try again later.'
+                });
+            }
+        });
+    </script>
+    
     <!-- Vendor JS-->
     <script src="userAssets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="userAssets/js/vendor/jquery-3.6.0.min.js"></script>
@@ -190,6 +205,8 @@
     <script src="userAssets/js/plugins/scrollup.js"></script>
     <script src="userAssets/js/plugins/jquery.vticker-min.js"></script>
     <script src="userAssets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Template  JS -->
     <script src="./userAssets/js/main.js?v=3.4"></script>
 </body>

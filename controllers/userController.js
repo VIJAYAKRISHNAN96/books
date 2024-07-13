@@ -116,40 +116,90 @@ const userController = {
   },
   verifyOTP: async (req, res) => {
     try {
+        console.log('Incoming OTP:', req.body.otp);
 
-      console.log(req.body,'incomming otp')
-      if (!req.session.details) {
-        return res.json({ message: "Session expired. Please start over." });
-      }
-
-      if (req.session.details.otp === parseInt(req.body.otp)) {
-        if (req.session.details.otpExpiration < Date.now()) {
-          return res.json({ expired: true });
-        } else {
-          console.log(req.session.details,'session is comming')
-          const hashedPassword = await securePassword(req.session.details.password);
-          console.log(hashedPassword,'hello password')
-
-          const user = new User({
-            name: req.session.details.name,
-            email: req.session.details.email,
-            password: hashedPassword,
-            isAdmin: 0,
-            isBlocked: false,
-          });
-               
-          await user.save();
-        //   req.session.destroy();
-          res. redirect("/login");
+        if (!req.session.details) {
+            console.log('Session expired.');
+            return res.json({ status: "error", message: "Session expired. Please start over." });
         }
-      } else {
-        return res.json({ message: "Invalid OTP" });
-      }
+
+        console.log('Session details:', req.session.details);
+        console.log('Session OTP:', req.session.details.otp);
+        console.log('OTP Expiration:', req.session.details.otpExpiration);
+
+        const inputOtp = parseInt(req.body.otp, 10);
+        console.log('Parsed Input OTP:', inputOtp);
+
+        if (req.session.details.otp === inputOtp) {
+            if (req.session.details.otpExpiration < Date.now()) {
+                console.log('OTP expired.');
+                return res.json({ status: "error", message: "OTP expired. Please request a new one." });
+            } else {
+                console.log('OTP valid, creating user...');
+                const hashedPassword = await securePassword(req.session.details.password);
+                console.log('Hashed Password:', hashedPassword);
+
+                const user = new User({
+                    name: req.session.details.name,
+                    email: req.session.details.email,
+                    password: hashedPassword,
+                    isAdmin: 0,
+                    isBlocked: false,
+                });
+
+                await user.save();
+                console.log('User created successfully.');
+                // req.session.destroy();
+                return res.json({ status: "success", message: "OTP verified successfully. Redirecting to login." });
+            }
+        } else {
+            console.log('Invalid OTP.');
+            return res.json({ status: "error", message: "Invalid OTP. Please try again." });
+        }
     } catch (error) {
-      console.log("Error in verifyOTP:", error.message);
-      res.status(500).json({ message: "Internal server error" });
+        console.log("Error in verifyOTP:", error.message);
+        console.error("Detailed error:", error);
+        res.status(500).json({ status: "error", message: "Internal server error. Please try again later." });
     }
-  },
+},
+
+  
+  // verifyOTP: async (req, res) => {
+  //   try {
+
+  //     console.log(req.body,'incomming otp')
+  //     if (!req.session.details) {
+  //       return res.json({ message: "Session expired. Please start over." });
+  //     }
+
+  //     if (req.session.details.otp === parseInt(req.body.otp)) {
+  //       if (req.session.details.otpExpiration < Date.now()) {
+  //         return res.json({ expired: true });
+  //       } else {
+  //         console.log(req.session.details,'session is comming')
+  //         const hashedPassword = await securePassword(req.session.details.password);
+  //         console.log(hashedPassword,'hello password')
+
+  //         const user = new User({
+  //           name: req.session.details.name,
+  //           email: req.session.details.email,
+  //           password: hashedPassword,
+  //           isAdmin: 0,
+  //           isBlocked: false,
+  //         });
+               
+  //         await user.save();
+  //       //   req.session.destroy();
+  //         res. redirect("/login");
+  //       }
+  //     } else {
+  //       return res.json({ message: "Invalid OTP" });
+  //     }
+  //   } catch (error) {
+  //     console.log("Error in verifyOTP:", error.message);
+  //     res.status(500).json({ message: "Internal server error" });
+  //   }
+  // },
   resendOTP: async (req, res) => {
     try {
       if (!req.session.details) {
