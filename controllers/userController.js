@@ -203,23 +203,35 @@ const userController = {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
       const category = req.query.category;
+      const sortBy = req.query.sortBy;
       const offset = (page - 1) * limit;
   
       let query = {};
       if (category) {
         query.category = category;
       }
+      let sort = {};
+        if (sortBy === 'priceAsc') {
+            sort = { price: 1 }; // Sort by price ascending
+        } else if (sortBy === 'priceDesc') {
+            sort = { price: -1 }; // Sort by price descending
+        }
   
       const total = await Product.countDocuments(query);
       const totalPages = Math.ceil(total / limit);
-      const products = await Product.find(query).skip(offset).limit(limit);
+      const products = await Product.find(query).sort(sort).skip(offset).limit(limit);
+
+      // const products = await Product.find(query).skip(offset).limit(limit);
+       
   
       res.render('shop', { 
         products: products,
         currentPage: page,
         totalPages: totalPages,
         limit: limit,
-        category: category
+        category: category,
+        sortBy: sortBy
+        
       });
     } catch (error) {
       console.log(error.message);

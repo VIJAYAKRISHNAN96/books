@@ -1,6 +1,20 @@
 <%-include("../partials/header.ejs")%>
     <!-- Quick view -->
-   
+   <style>
+    .active-category a {
+  border-bottom: 1px solid #fbfefe; /* Underline */
+  font-weight: 500; /* Make it bold */
+  color: #000605; /* Change text color */
+}
+
+/* Optionally, you can add other styles to make it more visually distinct */
+.active-category a {
+  background-color: #f0f0f0;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+   </style>
     <div class="mobile-header-active mobile-header-wrapper-style">
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
@@ -184,9 +198,9 @@
                                         <div class="sort-by">
                                             <span><i class="fi-rs-apps"></i>Show:</span>
                                         </div>
-                                        <div class="sort-by-dropdown-wrap">
+                                        <!-- <div class="sort-by-dropdown-wrap">
                                             <span> 50 <i class="fi-rs-angle-small-down"></i></span>
-                                        </div>
+                                        </div> -->
                                     </div>
                                     <div class="sort-by-dropdown">
                                         <!-- <ul>
@@ -199,24 +213,42 @@
                                     </div>
                                 </div>
                                 <div class="sort-by-cover">
+    <div class="sort-by-product-wrap">
+        <div class="sort-by">
+            <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+        </div>
+        <div class="sort-by-dropdown-wrap">
+            <span id="selected-sort"><%= sortBy === 'priceAsc' ? 'Price: Low to High' : sortBy === 'priceDesc' ? 'Price: High to Low' : 'Show All' %> <i class="fi-rs-angle-small-down"></i></span>
+        </div>
+    </div>
+    <div class="sort-by-dropdown">
+        <ul>
+            <li><a class="<%= sortBy === 'showAll' ? 'active' : '' %>" href="/shop?sortBy=showAll&category=<%= category %>">Show All</a></li>
+            <li><a class="<%= sortBy === 'priceAsc' ? 'active' : '' %>" href="/shop?sortBy=priceAsc&category=<%= category %>">Price: Low to High</a></li>
+            <li><a class="<%= sortBy === 'priceDesc' ? 'active' : '' %>" href="/shop?sortBy=priceDesc&category=<%= category %>">Price: High to Low</a></li>
+        </ul>
+    </div>
+</div>
+
+                                <!-- <div class="sort-by-cover">
                                     <div class="sort-by-product-wrap">
                                         <div class="sort-by">
                                             <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
                                         </div>
                                         <div class="sort-by-dropdown-wrap">
-                                            <span> Featured <i class="fi-rs-angle-small-down"></i></span>
+                                            <span> showAll <i class="fi-rs-angle-small-down"></i></span>
+
                                         </div>
                                     </div>
                                     <div class="sort-by-dropdown">
                                         <ul>
-                                            <!-- <li><a class="active" href="#">Featured</a></li>
+                                            <li><a class="active" href="#">showAll</a></li>
                                             <li><a href="#">Price: Low to High</a></li>
                                             <li><a href="#">Price: High to Low</a></li>
-                                            <li><a href="#">Release Date</a></li>
-                                            <li><a href="#">Avg. Rating</a></li> -->
+                                            
                                         </ul>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="row product-grid-3">
@@ -289,14 +321,22 @@
                     </div>
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
                         <div class="widget-category mb-30">
-                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
-                            <ul class="categories">
-                              <li><a href="/shop?category=Novel">Novel</a></li>
+                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>                           
+                                <ul class="categories">
+                                    <li class="<%= category === 'Novel' ? 'active-category' : '' %>"><a href="/shop?category=Novel">Novel</a></li>
+                                    <li class="<%= category === 'Biography' ? 'active-category' : '' %>"><a href="/shop?category=Biography">Biography</a></li>
+                                    <li class="<%= category === 'Travel' ? 'active-category' : '' %>"><a href="/shop?category=Travel">Travel</a></li>
+                                    <li class="<%= category === 'Fiction' ? 'active-category' : '' %>"><a href="/shop?category=Fiction">Fiction</a></li>
+                                    <li class="<%= category === 'Education' ? 'active-category' : '' %>"><a href="/shop?category=Education">Education</a></li>
+                                  </ul>
+                              <!-- <li><a href="/shop?category=Novel">Novel</a></li> -->
+                              <!-- <li class="<%= category === 'Novel' ? 'active-category' : '' %>"><a href="/shop?category=Novel">Novel</a></li>
+
                               <li><a href="/shop?category=Biography">Biography</a></li>
                               <li><a href="/shop?category=Travel">Travel</a></li>
                               <li><a href="/shop?category=Fiction">Fiction</a></li>
                               <li><a href="/shop?category=Education">Education</a></li>
-                            </ul>
+                            </ul> -->
                           </div>
                         <!-- Fillter By Price -->
                        

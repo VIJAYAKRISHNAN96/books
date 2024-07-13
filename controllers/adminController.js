@@ -134,32 +134,117 @@ const adminController = {
     }
 
   },
-  editProduct: async (req, res) => {
-    try {
-      const { name, description, author, price, category,stock,discountPrice } = req.body;
+  // editProduct: async (req, res) => {
+  //   try {
+  //     const { name, description, author, price, category,stock,discountPrice } = req.body;
       
+  //     const product = await productModel.findById(req.params.id);
+
+  //     if (req.files.length > 0) {
+  //       const images = [];
+
+  //       for (const file of req.files) {
+  //         const filename = Date.now() + path.extname(file.originalname);
+  //         const outputPath = path.join(__dirname, '../public/userAssets/imgs/shop', filename);
+
+  //         await sharp(file.path)
+  //           .resize(500, 500)
+  //           .toFile(outputPath);
+
+  //         images.push(filename);
+
+  //         // Delete the original file uploaded by multer
+  //         // fs.unlinkSync(file.path);
+  //       }
+
+  //       product.images = images;
+  //     }
+
+  //     product.name = name;
+  //     product.description = description;
+  //     product.price = parseFloat(price);
+  //     product.author = author;
+  //     product.category = category;
+  //     product.stock = parseFloat(stock);
+  //     product.discountPrice = discountPrice;
+
+  //     await product.save();
+  //     return res.status(201).redirect('/admin/products');
+  //   } catch (error) {
+  //     console.error(error.message);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  // },
+//   editProduct: async (req, res) => {
+//     try {
+//         const { name, description, author, price, category, stock, discountPrice } = req.body;
+        
+//         const product = await productModel.findById(req.params.id);
+//         if (!product) {
+//             return res.status(404).send('Product not found');
+//         }
+
+//         // Keep existing images
+//         const images = req.body.existingImages ? req.body.existingImages : [];
+        
+//         // Process new images if any
+//         if (req.files && req.files.length > 0) {
+//             for (const file of req.files) {
+//                 const filename = Date.now() + path.extname(file.originalname);
+//                 const outputPath = path.join(__dirname, '../public/userAssets/imgs/shop', filename);
+
+//                 await sharp(file.path)
+//                     .resize(500, 500)
+//                     .toFile(outputPath);
+
+//                 images.push(filename);
+//             }
+//         }
+
+//         // Update product details
+//         product.name = name;
+//         product.description = description;
+//         product.price = parseFloat(price);
+//         product.author = author;
+//         product.category = category;
+//         product.stock = parseFloat(stock);
+//         product.discountPrice = discountPrice;
+//         product.images = images; // Save the combined images array
+
+//         await product.save();
+//         return res.status(201).redirect('/admin/products');
+//     } catch (error) {
+//         console.error(error.message);
+//         res.status(500).send('Internal Server Error');
+//     }
+// },
+editProduct: async (req, res) => {
+  try {
+      const { name, description, author, price, category, stock, discountPrice, existingImages } = req.body;
+
       const product = await productModel.findById(req.params.id);
-
-      if (req.files.length > 0) {
-        const images = [];
-
-        for (const file of req.files) {
-          const filename = Date.now() + path.extname(file.originalname);
-          const outputPath = path.join(__dirname, '../public/userAssets/imgs/shop', filename);
-
-          await sharp(file.path)
-            .resize(500, 500)
-            .toFile(outputPath);
-
-          images.push(filename);
-
-          // Delete the original file uploaded by multer
-          // fs.unlinkSync(file.path);
-        }
-
-        product.images = images;
+      if (!product) {
+          return res.status(404).send('Product not found');
       }
 
+      // Start with existing images
+      const images = existingImages ? existingImages : [];
+
+      // Process new images
+      if (req.files && req.files.length > 0) {
+          for (const file of req.files) {
+              const filename = Date.now() + path.extname(file.originalname);
+              const outputPath = path.join(__dirname, '../public/userAssets/imgs/shop', filename);
+
+              await sharp(file.path)
+                  .resize(500, 500)
+                  .toFile(outputPath);
+
+              images.push(filename);
+          }
+      }
+
+      // Update product details
       product.name = name;
       product.description = description;
       product.price = parseFloat(price);
@@ -167,14 +252,16 @@ const adminController = {
       product.category = category;
       product.stock = parseFloat(stock);
       product.discountPrice = discountPrice;
+      product.images = images; // Save the combined images array
 
       await product.save();
       return res.status(201).redirect('/admin/products');
-    } catch (error) {
+  } catch (error) {
       console.error(error.message);
       res.status(500).send('Internal Server Error');
-    }
-  },
+  }
+},
+
   
   deleteProduct: async (req, res) => {
     try {
@@ -255,9 +342,38 @@ loadUserlist: async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const offset = (page - 1) * limit;
+
+    const searchQuery = req.query.search || '';
+    const statusFilter = req.query.status || '';
+
+    const filter = { isAdmin: false };
+
+
+    // if (searchQuery) {
+    //   filter.name = { $regex: searchQuery, $options: 'i' }; // Case-insensitive search
+    // }
+
+    if (searchQuery) {
+      filter.$or = [
+        { name: { $regex: searchQuery, $options: 'i' } },
+        { email: { $regex: searchQuery, $options: 'i' } }
+      ];
+    }
+
+    if (statusFilter === 'Active') {
+      filter.isBlocked = false;
+    } else if (statusFilter === 'Disabled') {
+      filter.isBlocked = true;
+    }
+
+    
+
+
     const total = await userModel.countDocuments();
     const totalPages = Math.ceil(total / limit);
-    const userList = await userModel.find({ isAdmin: false }).skip(offset).limit(limit);
+    const userList = await userModel.find(filter).skip(offset).limit(limit);
+
+    // const userList = await userModel.find({ isAdmin: false }).skip(offset).limit(limit);
     console.log(userList);
     
     return res.render("userlist", {
@@ -265,6 +381,8 @@ loadUserlist: async (req, res) => {
       currentPage: page,
       totalPages: totalPages,
       limit: limit,
+      searchQuery: searchQuery,
+      statusFilter: statusFilter,
       message: null,
       messageType: null
     });
