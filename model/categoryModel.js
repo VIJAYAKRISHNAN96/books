@@ -7,6 +7,10 @@ const categorySchema=mongoose.Schema({
         type:String,
         required:true
     },
+    description:{
+        type:String,
+        required:true
+    },
     isListed : {
         type : String,
         enum:["Active","Inactive"],
@@ -14,7 +18,7 @@ const categorySchema=mongoose.Schema({
     },
     createdOn:{
         type:Date,
-        required:true
+        required:false
     },
     deleted:{
         type:Boolean,

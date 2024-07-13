@@ -263,28 +263,28 @@ editProduct: async (req, res) => {
 },
 
   
+//  deleteCategory : async (req, res) => {
+//   const { id } = req.params;
+//   console.log(req.params + "Delete category .................")
+//   try {
+//       await categoryModel.findByIdAndDelete(id);
+//       return res.status(200).redirect('/admin/category');
+//   } catch (error) {
+//       console.error(error.message);
+//       res.status(500).send('Internal Server Error');
+//   }
+// },
   deleteProduct: async (req, res) => {
     try {
       const { id } = req.params;
       console.log(req.params + "Delete product .................")
       await productModel.findByIdAndDelete(id);
-      return res.status(200).redirect('/admin/products');
+      return res.status(200).json({ success: true, message: 'Product deleted successfully' });
     } catch (error) {
       console.error(error.message);
-      res.status(500).send('Internal Server Error');
+      return res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
   },
-  // deleteProduct: async (req, res) => {
-  //   try {
-  //     const { id } = req.params;
-  //     console.log(req.params + "Delete product .................")
-  //     await productModel.findByIdAndDelete(id);
-  //     return res.status(200).json({ success: true, message: 'Product deleted successfully' });
-  //   } catch (error) {
-  //     console.error(error.message);
-  //     return res.status(500).json({ success: false, message: 'Internal Server Error' });
-  //   }
-  // },
   
 
   loadCategory: async (req, res) => {
@@ -300,30 +300,68 @@ editProduct: async (req, res) => {
 
   },
   
-    addCategory : async (req, res) => {
-      const { name, description } = req.body;
-      console.log("dssdsdsdfsdfsdfsdf", req.body);
-      try {
-          const newCategory = new categoryModel ({ name, description });
-          await newCategory.save();
-          return res.status(200).redirect("/admin/category")
-      } catch (error) {
-          console.error(error.message);
-          res.status(500).send('Internal Server Error rrrr');
-      }
-  },
-  editCategory : async (req, res) => {
-    const _id = req.params.id;
-    const { name, description } = req.body;
-    console.log("dssdsdsdfsdfsdfsdf", req.body);
+  //   addCategory : async (req, res) => {
+  //     const { name, description,discount } = req.body;
+  //     console.log("dssdsdsdfsdfsdfsdf", req.body);
+  //     try {
+  //         const newCategory = new categoryModel ({ name, description,discount });
+  //         await newCategory.save();
+  //         return res.status(200).redirect("/admin/category")
+  //     } catch (error) {
+  //         console.error(error.message);
+  //         res.status(500).send('Internal Server Error rrrr');
+  //     }
+  // },
+  addCategory: async (req, res) => {
+    const { name, description, discount } = req.body;
+    console.log("Adding category:", req.body);
     try {
-        await categoryModel.findByIdAndUpdate(_id, { name, description });
-        return res.status(201).redirect('/admin/category');
+        if (!name || !description) {
+            return res.status(400).send('Name and description are required');
+        }
+        const newCategory = new categoryModel({ 
+            name, 
+            description, 
+            discount: discount ? Number(discount) : undefined 
+        });
+        await newCategory.save();
+        return res.status(201).redirect("/admin/category")
     } catch (error) {
-        console.error(error.message);
+        console.error('Error adding category:', error);
         res.status(500).send('Internal Server Error');
     }
-  },
+},
+  // editCategory : async (req, res) => {
+  //   const _id = req.params.id;
+  //   const { name, description,discount } = req.body;
+  //   console.log("dssdsdsdfsdfsdfsdf", req.body);
+  //   try {
+  //       await categoryModel.findByIdAndUpdate(_id, { name, description,discount });
+  //       return res.status(201).redirect('/admin/category');
+  //   } catch (error) {
+  //       console.error(error.message);
+  //       res.status(500).send('Internal Server Error');
+  //   }
+  // },
+  editCategory: async (req, res) => {
+    const _id = req.params.id;
+    const { name, description, discount } = req.body;
+    console.log("Editing category:", req.body);
+    try {
+        if (!name || !description) {
+            return res.status(400).send('Name and description are required');
+        }
+        await categoryModel.findByIdAndUpdate(_id, { 
+            name, 
+            description, 
+            discount: discount ? Number(discount) : undefined 
+        });
+        return res.status(200).redirect('/admin/category');
+    } catch (error) {
+        console.error('Error editing category:', error);
+        res.status(500).send('Internal Server Error');
+    }
+},
 
 deleteCategory : async (req, res) => {
   const { id } = req.params;
