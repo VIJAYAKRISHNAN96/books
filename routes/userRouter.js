@@ -89,7 +89,12 @@ const auth=require("../middlewares/userAuth");
 userRouter.get("/", userController.homePage);
 userRouter.get("/signup",auth.isLogOut, userController.loadSignup);
 userRouter.post("/signup", userController.processSignup);
+// userRouter.get("/productDetails",userController.productDetails);
+// userRouter.get("/product", userController.loadProductDetail);
 userRouter.get("/product", userController.loadProductDetails);
+// userRouter.get("/product",userController.loadProductDetails);
+// userRouter.get("/productDetails",userController.loadProductDetails);
+
 
 userRouter.get("/login",auth.isLogOut, userController.loadLogin);
 userRouter.post("/login", userController.processLogin);
@@ -100,6 +105,12 @@ userRouter.get("/shop", userController.loadShop);
 // userRouter.get('/shop/filter', userController.loadShopByCategory);
 userRouter.post("/verifyOTP", userController.verifyOTP);
 userRouter.post("/resendOTP", userController.resendOTP);
+userRouter.get('/cart',auth.isLogin,userController.loadCart);
+userRouter.post("/addToCart",auth.isLogin,userController.addToCart);
+// userRouter.post("/cart/remove", auth.isLogin, userController.removeFromCart);
+// userRouter.post("/cart/update", auth.isLogin, userController.updateCartItemQuantity)
+
+userRouter.get('/checkout',auth.isLogin, userController.loadCheckout);
 
 userRouter.get('/otpVerify',auth.isLogOut, userController.loadOTP);
 

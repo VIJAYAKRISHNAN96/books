@@ -28,6 +28,8 @@ const userSchema= mongoose.Schema({
     createdOn:{
         type:Date
     },
+   
+
     address:[{
         houseName:{
             type:String
@@ -53,7 +55,13 @@ const userSchema= mongoose.Schema({
             type:String
         }
     
-    }]
+    }],
+    cart: [
+        {
+          productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+          quantity: { type: Number, default: 1 }
+        }
+      ]
 
 })
 

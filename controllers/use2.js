@@ -291,6 +291,57 @@ const userController = {
     }
   },
   
+  // loadProductDetail : async (req, res) => {
+  //   try {
+  //     const productId = req.params.productId;
+  //     const product = await Product.findById(productId);
+  
+  //     if (!product) {
+  //       return res.status(404).send('Product not found');
+  //     }
+  
+  //     res.render('productDetails', {
+  //       product: product,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).send('Internal server error');
+  //   }
+  // },
+  
+  // 
+//   loadProductDetails: async (req, res) => {
+//     try {
+//         const userId = req.session.user ? req.session.user.id : null; // Safely access user ID
+//         const productId = req.params.productId; // Get product ID from request params
+
+//         const product = await Product.findById(productId); // Fetch the product from the database
+//         if (!product) {
+//             return res.status(404).send('Product not found');
+//         }
+
+//         res.render('productDetails', { product, user: { id: userId } }); // Pass user ID to EJS
+//     } catch (error) {
+//         console.error('Error loading product details:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// },
+// loadProductDetails: async (req, res) => {
+//   try {
+//       const productId = req.params.productId;
+//       const product = await Product.findById(productId);
+
+//       if (!product) {
+//           return res.status(404).render('user/errorPage', { message: 'Product not found' });
+//       }
+
+//       res.render('user/productDetails', { product });
+//   } catch (error) {
+//       console.error('Error loading product details:', error);
+//       res.status(500).render('user/errorPage', { message: 'Internal Server Error' });
+  
+//     }
+// },
 
 
 
@@ -317,46 +368,240 @@ loadProductDetails : async (req, res) => {
   }
 },
  
+// last changed
+// addToCart: async (req, res) => {
+//   try {
+//     const userId = req.session.user._id;
 
-addToCart : async (req, res) => {
+//     // Log the incoming request body
+//     console.log('Request Body:', req.body);
+//     console.log('Incoming request to addToCart:', req.body)
+
+//     const { productId, quantity } = req.body;
+
+//     // Validate input
+//     if (!productId) {
+//       return res.status(400).json({ error: 'Product ID is required' });
+//     }
+//     if (!quantity || isNaN(quantity) || quantity <= 0) {
+//       return res.status(400).json({ error: 'Quantity must be a positive number' });
+//     }
+
+//     // Find or create cart
+//     let cart = await Cart.findOne({ userId }) || new Cart({ userId, products: [] });
+
+//     // Update cart
+//     const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === productId);
+//     if (existingProductIndex > -1) {
+//       cart.products[existingProductIndex].quantity += parseInt(quantity);
+//     } else {
+//       cart.products.push({ productId, quantity: parseInt(quantity) });
+//     }
+
+//     await cart.save();
+//     console.log('Cart updated successfully:', cart);
+    
+//     res.status(200).json({ message: 'Product added to cart successfully' });
+//   } catch (error) {
+//     console.error('Error adding to cart:', error);
+//     res.status(500).json({ error: 'Error adding item to cart' });
+//   }
+// },
+
+
+// loadCart: async (req, res) => {
+//   try {
+//     const user = req.session.user;
+//     if (!user || !user.cart || user.cart.length === 0) {
+//       return res.render('cart', { cart: { product: [] } });
+//     }
+    
+//     const products = await Product.find({ _id: { $in: user.cart } });
+    
+//     // If you have quantity information, you could add it here
+//     const productsWithQuantity = products.map(product => ({
+//       ...product.toObject(),
+//       quantity: 1 // Replace with actual quantity if available
+//     }));
+
+//     res.render('cart', { cart: { product: productsWithQuantity } });
+//   } catch (error) {
+//     console.log(error.message);
+//     res.status(500).send('Internal Server Error');
+//   }
+// },
+
+
+
+// last modi
+
+// loadCart: async (req, res) => {
+//   try {
+//       const userId = req.session.user?.id;
+//       if (!userId) {
+//           return res.redirect('/login'); // Redirect to login if user is not logged in
+//       }
+
+//       const cart = await Cart.findOne({ userId });
+//       if (!cart || cart.products.length === 0) {
+//           return res.render('cart', { cart: { products: [] } });
+//       }
+
+//       const productIds = cart.products.map(item => item.productId);
+//       const products = await Product.find({ _id: { $in: productIds } });
+
+//       // Combine products with quantities
+//       const productsWithQuantity = products.map(product => {
+//           const cartItem = cart.products.find(item => item.productId.toString() === product._id.toString());
+//           return {
+//               ...product.toObject(),
+//               quantity: cartItem ? cartItem.quantity : 1 // Replace with actual quantity
+//           };
+//       });
+
+//       res.render('cart', { cart: { products: productsWithQuantity } });
+//   } catch (error) {
+//       console.log('Error loading cart:', error.message);
+//       res.status(500).send('Internal Server Error');
+//   }
+// },
+//  loadCart : async (req, res) => {
+//   try {
+//       const userId = req.session.user._id; // Assuming user ID is stored as _id in session
+//       const page = parseInt(req.query.page, 10) || 1;
+//       const limit = 5; // Number of items per page
+//       const skip = (page - 1) * limit;
+
+//       let cart = await Cart.findOne({ userId }).populate('products.productId');
+      
+//       if (!cart) {
+//           cart = { products: [], totalPrice: 0 };
+//       }
+
+//       const paginatedProducts = cart.products.slice(skip, skip + limit);
+//       const totalItems = cart.products.length;
+//       const totalPages = Math.ceil(totalItems / limit);
+
+//       // Ensure totalPrice is a number and format it
+//       cart.totalPrice = parseFloat((cart.totalPrice || 0).toFixed(2));
+
+//       res.render('cart', {
+//           cart: {
+//               products: paginatedProducts,
+//               totalQuantity: totalItems,
+//               totalPrice: cart.totalPrice,
+//               totalPages,
+//               currentPage: page
+//           }
+//       });
+//   } catch (error) {
+//       console.error('Error loading cart:', error.message);
+//       res.status(500).render('error', { message: 'Internal Server Error', messageType: 'error' });
+//   }
+// },
+
+//  =========  last modi ======  >>>> addToCart : async (req, res) => {
+//   try {
+//     console.log("addToCart method called");
+//         console.log("Request body:", req.body);
+//         console.log("Full session object:", req.session);
+//         console.log("User in session:", req.session.user);
+
+
+//         if (!req.session || !req.session.user || !req.session.user.id) {
+//           console.log("User session not found or incomplete");
+//           return res.status(401).json({ error: 'User not authenticated' });
+//       }
+
+
+//       const userId = req.session.user.id;
+//       console.log("User ID:", userId);
+//       // const { productId, quantity = 1 } = req.body;
+
+//       console.log("Product ID:", productId);
+//       console.log("Quantity:", quantity);
+
+//       if (!product) {
+//         console.log("Product ID is missing");
+//           return res.status(400).json({ error: 'Product ID is required' });
+//       }
+//       if (isNaN(quantity) || quantity <= 0) {
+//         console.log("Invalid quantity:", quantity);
+
+//           return res.status(400).json({ error: 'Quantity must be a positive number' });
+//       }
+
+//       const product = await Product.findById(productId);
+//       if (!product) {
+//           return res.status(404).json({ error: 'Product not found' });
+//       }
+
+//       let cart = await Cart.findOne({ userId });
+//       console.log("Existing cart:", cart);
+
+//       if (!cart) {
+//           console.log("Creating new cart");
+//           cart = new Cart({ userId, products: [] });
+//       }
+
+//       const existingProductIndex = cart.products.findIndex(item => item.productId.equals(productId));
+//       if (existingProductIndex !== -1) {
+//           console.log("Product already in cart");
+//           return res.json({ alreadyInCart: true });
+//       }
+
+//       const productPrice = (product.mainprice !== 0 && product.mainprice < product.price) ? product.mainprice : product.price;
+//       console.log("Product price:", productPrice);
+
+
+//       cart.products.push({ productId, quantity: parseInt(quantity), productPrice });
+//       cart.total += productPrice * parseInt(quantity);
+
+//       console.log("Updated cart:", cart);
+
+//       await cart.save();
+//       console.log("Cart saved successfully");
+
+
+
+//       res.json({ success: true });
+//   } catch (error) {
+//       console.log("Error Occurred: ", error);
+//       res.status(500).send('Internal Server Error');
+//   }
+// },
+addToCart: async (req, res) => {
   try {
-    console.log("Full session object:", req.session);
-
-    if (!req.session || !req.session.user || !req.session.user.id) {
-      return res.status(401).json({ error: 'User not authenticated' });
-    }
-
-    const userId = req.session.user.id;
-    const { productId, quantity = 1 } = req.body;
-
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    let cart = await Cart.findOne({ userId });
-    if (!cart) {
-      cart = new Cart({ userId, products: [], totalPrice: 0 });
-    }
-
-    const productPrice = (product.mainprice !== 0 && product.mainprice < product.price) ? product.mainprice : product.price;
-
-    const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === productId);
-    if (existingProductIndex > -1) {
-      cart.products[existingProductIndex].quantity += parseInt(quantity);
-      cart.products[existingProductIndex].productPrice = productPrice; // Update the price in case it has changed
-    } else {
+      console.log("Full session object:", req.session);
+      
+      if (!req.session || !req.session.user || !req.session.user.id) {
+          return res.status(401).json({ error: 'User not authenticated' });
+      }
+      
+      const userId = req.session.user.id;
+      const { productId, quantity = 1 } = req.body;
+      
+      const product = await Product.findById(productId);
+      if (!product) {
+          return res.status(404).json({ error: 'Product not found' });
+      }
+      
+      let cart = await Cart.findOne({ userId });
+      if (!cart) {
+          cart = new Cart({ userId, products: [], totalPrice: 0 });
+      }
+      
+      const productPrice = (product.mainprice !== 0 && product.mainprice < product.price) ? product.mainprice : product.price;
+      
       cart.products.push({ productId, quantity: parseInt(quantity), productPrice });
-    }
-
-    cart.totalPrice = cart.products.reduce((total, item) => total + (item.productPrice * item.quantity), 0);
-
-    await cart.save();
-
-    res.json({ success: true, message: 'Product added to cart' });
+      cart.totalPrice += productPrice * parseInt(quantity);
+      
+      await cart.save();
+      
+      res.json({ success: true, message: 'Product added to cart' });
   } catch (error) {
-    console.error("Error in addToCart:", error);
-    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+      console.error("Error in addToCart:", error);
+      res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
 },
 
@@ -823,31 +1068,24 @@ addToCart : async (req, res) => {
 //   }
 // },
 
- loadCart : async (req, res) => {
+loadCart : async (req, res) => {
   try {
-    console.log("Session object:", req.session);
+      const userId = req.session.user._id;
+      const cart = await Cart.findOne({ userId }).populate('products.productId');
 
-    const userId = req.session.user ? req.session.user.id : null;
-    if (!userId) {
-      return res.render('cart', { cart: { products: [], totalPrice: 0 } });
-    }
+      if (!cart || !cart.products || cart.products.length === 0) {
+          return res.render('cart', { cart: { products: [], totalPrice: 0 } });
+      }
 
-    const cart = await Cart.findOne({ userId }).populate('products.productId');
+      // Calculate total price
+      cart.totalPrice = cart.products.reduce((total, item) => total + (item.productPrice * item.quantity), 0);
 
-    if (!cart || !cart.products || cart.products.length === 0) {
-      return res.render('cart', { cart: { products: [], totalPrice: 0 } });
-    }
-
-    cart.totalPrice = cart.products.reduce((total, item) => total + (item.productPrice * item.quantity), 0);
-
-    res.render('cart', { cart });
+      res.render('cart', { cart });
   } catch (error) {
-    console.log('Error Occurred: ', error);
-    res.status(500).send('Internal Server Error');
+      console.log('Error Occurred: ', error);
+      res.status(500).send('Internal Server Error');
   }
 },
-
-
 
 
 loadCheckout: async (req, res) => {

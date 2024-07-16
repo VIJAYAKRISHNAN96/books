@@ -34,11 +34,16 @@ app.use(express.urlencoded({extended:true}));
      secret: 'secret',
      resave: false,
      saveUninitialized: true,
-     cookie: { secure: false },
+    //  store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
+     cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 },
    })
  );
+ app.use(express.json());
+ 
+
 
  app.use((req, res, next) => {
+  console.log('Session on every request:', req.session);
    res.locals.user = req.session.user || null;
    next();
  });

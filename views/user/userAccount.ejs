@@ -1,5 +1,131 @@
 <%-include("../partials/header.ejs")%>
 
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAddressForm">
+                    <div class="mb-3">
+                        <label for="houseName" class="form-label">House Name:</label>
+                        <input type="text" class="form-control" id="houseName" required>
+                        <div id="houseNameError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="street" class="form-label">Street:</label>
+                        <input type="text" class="form-control" id="street" required>
+                        <div id="streetError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City:</label>
+                        <input type="text" class="form-control" id="city" required>
+                        <div id="cityError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State:</label>
+                        <input type="text" class="form-control" id="state" required>
+                        <div id="stateError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country:</label>
+                        <input type="text" class="form-control" id="country" required>
+                        <div id="countryError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="postalCode" class="form-label">Postal Code:</label>
+                        <input type="text" class="form-control" id="postalCode" required>
+                        <div id="postalCodeError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNo" class="form-label">Phone No:</label>
+                        <input type="text" class="form-control" id="phoneNo" required>
+                        <div id="phoneNoError" class="error-message text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addressType" class="form-label">Address Type:</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="addressType" id="office" value="office">
+                            <label class="form-check-label" for="office">Office</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="addressType" id="home" value="home">
+                            <label class="form-check-label" for="home">Home</label>
+                        </div>
+                        <div id="addressTypeError" class="error-message text-danger"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #FF6B6B;">Close</button>
+                <button type="button" class="btn btn-primary" onclick="validateAddress()" style="background-color: #557775;">Save Address</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAddressModalLabel">Edit Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="addressId">
+                <form id="editAddressForm">
+                    <div class="mb-3">
+                        <label for="editHouseName" class="form-label">House Name:</label>
+                        <input type="text" class="form-control" id="editHouseName" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="editStreet" class="form-label">Street:</label>
+                        <input type="text" class="form-control" id="editStreet">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCity" class="form-label">City:</label>
+                        <input type="text" class="form-control" id="editCity">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editState" class="form-label">State:</label>
+                        <input type="text" class="form-control" id="editState">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCountry" class="form-label">Country:</label>
+                        <input type="text" class="form-control" id="editCountry">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPostalCode" class="form-label">Postal Code:</label>
+                        <input type="text" class="form-control" id="editPostalCode">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPhoneNo" class="form-label">Phone No:</label>
+                        <input type="text" class="form-control" id="editPhoneNo">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAddressType" class="form-label">Address Type:</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="editAddressType" id="editOffice" value="office">
+                            <label class="form-check-label" for="editOffice">Office</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="editAddressType" id="editHome" value="home">
+                            <label class="form-check-label" for="editHome">Home</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateAddress()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
